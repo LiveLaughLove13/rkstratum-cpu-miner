@@ -140,8 +140,7 @@ jobs:
             libglib2.0-dev \
             pkg-config \
             libasound2-dev \
-            libdbus-1-dev \
-            libayatana-appindicator3-dev
+            libdbus-1-dev
 
       - name: Verify and configure glib-2.0
         run: |
