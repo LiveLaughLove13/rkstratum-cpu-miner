@@ -128,7 +128,7 @@ jobs:
             src-tauri/target/x86_64-pc-windows-msvc/release/bundle/**/*
 
   build-linux:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
