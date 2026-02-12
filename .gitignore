@@ -70,6 +70,12 @@ build/
 *.swo
 *~
 
+# Screenshots (keep directory structure but allow images)
+!screenshots/
+!screenshots/*.png
+!screenshots/*.jpg
+!screenshots/*.jpeg
+
 # Environment files
 .env
 .env.local

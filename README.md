@@ -11,6 +11,18 @@ A standalone, native desktop application for CPU mining on Kaspa Testnet 12 (TN1
 - 🔌 **Node Connection** - Connect to any Kaspa node via gRPC
 - 🎯 **Easy Setup** - Simple GUI to configure mining address and settings
 
+## Screenshots
+
+### Main Interface
+![Main Interface](screenshots/main-interface.png)
+
+The main interface showing the mining configuration panel with address input, threads slider, throttle settings, and control buttons. Status indicators show "Mining: Active" and "Node: Connected" with green indicators. The Statistics section displays real-time metrics including hashes tried, blocks submitted, and blocks accepted.
+
+### Logs Panel
+![Logs Panel](screenshots/logs-panel.png)
+
+The logs panel displaying real-time mining activity. Shows timestamped log entries with "Block accepted by node" messages, including nonce values for successfully mined blocks. The panel can be toggled using the "Show Logs" button in the header.
+
 ## Requirements
 
 - Rust (latest stable)
