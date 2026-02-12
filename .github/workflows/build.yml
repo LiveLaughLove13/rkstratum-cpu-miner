@@ -21,21 +21,20 @@ jobs:
         with:
           workspaces: './src-tauri -> target'
 
-      - name: Check code formatting
-        continue-on-error: true
+      - name: Format check
         run: |
           cd src-tauri
-          cargo fmt -- --check || echo "Formatting check failed - run 'cargo fmt' to fix"
+          cargo fmt --all -- --check
 
-      - name: Run clippy
+      - name: Clippy
         run: |
           cd src-tauri
-          cargo clippy -- -D warnings
+          cargo clippy --all-targets --all-features -- -D warnings
 
       - name: Build (check only)
         run: |
           cd src-tauri
-          cargo check --release
+          cargo check --release --all-features
 
   build-windows:
     runs-on: windows-latest
