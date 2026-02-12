@@ -104,11 +104,24 @@ jobs:
             libdbus-1-dev \
             libayatana-appindicator3-dev
 
-      - name: Verify glib-2.0 installation
+      - name: Verify and configure glib-2.0
         run: |
-          pkg-config --modversion glib-2.0 || echo "glib-2.0 not found"
-          pkg-config --cflags --libs glib-2.0 || echo "pkg-config failed"
-          find /usr -name "glib-2.0.pc" 2>/dev/null | head -1 || echo "glib-2.0.pc not found"
+          # Find glib-2.0.pc location
+          GLIB_PC_PATH=$(find /usr -name "glib-2.0.pc" 2>/dev/null | head -1)
+          if [ -z "$GLIB_PC_PATH" ]; then
+            echo "ERROR: glib-2.0.pc not found"
+            exit 1
+          fi
+          GLIB_PC_DIR=$(dirname "$GLIB_PC_PATH")
+          echo "Found glib-2.0.pc at: $GLIB_PC_PATH"
+          echo "Setting PKG_CONFIG_PATH to: $GLIB_PC_DIR"
+          echo "PKG_CONFIG_PATH=$GLIB_PC_DIR" >> $GITHUB_ENV
+          # Also add common pkg-config paths
+          export PKG_CONFIG_PATH="$GLIB_PC_DIR:/usr/lib/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/share/pkgconfig"
+          echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH" >> $GITHUB_ENV
+          # Verify it works
+          pkg-config --modversion glib-2.0
+          pkg-config --cflags --libs glib-2.0
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
