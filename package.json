@@ -1,0 +1,13 @@
+{
+  "name": "rkstratum-cpu-miner",
+  "version": "0.1.0",
+  "description": "RKStratum CPU Miner - Standalone CPU mining GUI for Kaspa Testnet 12",
+  "private": true,
+  "scripts": {
+    "dev": "tauri dev",
+    "build": "tauri build"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
+
