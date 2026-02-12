@@ -9,13 +9,13 @@ use std::sync::Arc;
 use std::time::Duration;
 use tauri::{AppHandle, Emitter, State};
 use tokio::sync::Mutex;
+use tracing_subscriber::layer::SubscriberExt;
+use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::{
     fmt::{format::Writer, time::FormatTime, MakeWriter},
     layer::Layer,
     EnvFilter,
 };
-use tracing_subscriber::layer::SubscriberExt;
-use tracing_subscriber::util::SubscriberInitExt;
 
 struct MinerState {
     api: Arc<Mutex<Option<Arc<KaspaApi>>>>,
@@ -98,7 +98,7 @@ async fn disconnect_node(state: State<'_, MinerState>) -> Result<String, String>
             *state.metrics.lock().await = None;
         }
     }
-    
+
     // Clear API connection
     *state.api.lock().await = None;
     Ok("Disconnected".to_string())
@@ -144,27 +144,27 @@ fn main() {
             // Store app handle globally for log emission
             let app_handle = app.handle().clone();
             APP_HANDLE.set(app_handle.clone()).ok();
-            
+
             // Initialize tracing with custom layer that emits Tauri events
-            let filter = EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| EnvFilter::new("info"));
-            
+            let filter =
+                EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info"));
+
             // Create a custom layer that emits to Tauri events
             let tauri_layer = tracing_subscriber::fmt::layer()
                 .with_timer(LocalTimer)
                 .with_writer(TauriLogWriter)
                 .with_filter(filter.clone());
-            
+
             // Also log to stdout for debugging
             let stdout_layer = tracing_subscriber::fmt::layer()
                 .with_timer(LocalTimer)
                 .with_filter(filter);
-            
+
             tracing_subscriber::registry()
                 .with(tauri_layer)
                 .with(stdout_layer)
                 .init();
-            
+
             Ok(())
         })
         .manage(MinerState {
@@ -211,4 +211,3 @@ impl std::io::Write for TauriLogWriter {
         Ok(())
     }
 }
-

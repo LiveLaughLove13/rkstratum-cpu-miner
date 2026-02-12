@@ -2,8 +2,8 @@ use anyhow::{Context, Result};
 use kaspa_addresses::Address;
 use kaspa_grpc_client::GrpcClient;
 use kaspa_rpc_core::{
-    GetBlockTemplateRequest, RpcRawBlock, SubmitBlockRequest, SubmitBlockResponse, api::rpc::RpcApi,
-    notify::mode::NotificationMode,
+    api::rpc::RpcApi, notify::mode::NotificationMode, GetBlockTemplateRequest, RpcRawBlock,
+    SubmitBlockRequest, SubmitBlockResponse,
 };
 use std::sync::Arc;
 use std::time::Duration;
@@ -98,23 +98,36 @@ impl KaspaApi {
 
         for attempt in 0..max_retries {
             // Parse wallet address each time (in case Address doesn't implement Clone)
-            let address = Address::try_from(mining_address)
-                .map_err(|e| anyhow::anyhow!("Could not decode address {}: {}", mining_address, e))?;
+            let address = Address::try_from(mining_address).map_err(|e| {
+                anyhow::anyhow!("Could not decode address {}: {}", mining_address, e)
+            })?;
 
             // Request block template using RPC client wrapper
             let response = match self
                 .client
-                .get_block_template_call(None, GetBlockTemplateRequest::new(address, b"internal".to_vec()))
+                .get_block_template_call(
+                    None,
+                    GetBlockTemplateRequest::new(address, b"internal".to_vec()),
+                )
                 .await
             {
                 Ok(r) => r,
                 Err(e) => {
                     if attempt < max_retries - 1 {
-                        warn!("Failed to get block template (attempt {}/{}): {}, retrying...", attempt + 1, max_retries, e);
+                        warn!(
+                            "Failed to get block template (attempt {}/{}): {}, retrying...",
+                            attempt + 1,
+                            max_retries,
+                            e
+                        );
                         sleep(Duration::from_millis(100 * (attempt + 1) as u64)).await;
                         continue;
                     }
-                    return Err(anyhow::anyhow!("Failed to get block template after {} attempts: {}", max_retries, e));
+                    return Err(anyhow::anyhow!(
+                        "Failed to get block template after {} attempts: {}",
+                        max_retries,
+                        e
+                    ));
                 }
             };
 
@@ -131,7 +144,12 @@ impl KaspaApi {
                     let error_msg = e.to_string();
                     last_error = Some(error_msg.clone());
                     if attempt < max_retries - 1 {
-                        warn!("Failed to convert RPC block to Block (attempt {}/{}): {}, retrying...", attempt + 1, max_retries, error_msg);
+                        warn!(
+                            "Failed to convert RPC block to Block (attempt {}/{}): {}, retrying...",
+                            attempt + 1,
+                            max_retries,
+                            error_msg
+                        );
                         sleep(Duration::from_millis(100 * (attempt + 1) as u64)).await;
                         continue;
                     }
@@ -155,4 +173,3 @@ impl KaspaApi {
             .context("Failed to submit block")
     }
 }
-
