@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RKStratum CPU Miner</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="title-section">
+                <span class="title-icon">⚡</span>
+                <h1 class="app-title">RKStratum CPU Miner</h1>
+                <span class="heart-icon">♥</span>
+            </div>
+            <div class="status-indicators">
+                <div class="status-item">
+                    <span class="status-dot" id="mining-dot"></span>
+                    <span class="status-text" id="mining-status">Mining: Stopped</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-dot" id="node-dot"></span>
+                    <span class="status-text" id="node-status">Node: Disconnected</span>
+                </div>
+                <button class="logs-button" id="show-logs-btn">📎 Show Logs</button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Connection Section -->
+            <div class="section">
+                <div class="section-header" onclick="toggleSection('connection')">
+                    <span class="section-icon">■</span>
+                    <span class="chevron" id="connection-chevron">▼</span>
+                    <h2 class="section-title">Connection</h2>
+                    <span class="section-subtitle">Connect to Kaspa node</span>
+                </div>
+                <div class="section-content" id="connection-content">
+                    <div class="input-group">
+                        <label>Address:</label>
+                        <input type="text" id="node-address" value="127.0.0.1:16210" placeholder="127.0.0.1:16210">
+                    </div>
+                    <div class="button-group">
+                        <button class="btn btn-teal" id="connect-btn">⚡ Connect</button>
+                        <button class="btn btn-danger" id="disconnect-btn" style="display: none;">🔌 Disconnect</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mining Section -->
+            <div class="section">
+                <div class="section-header" onclick="toggleSection('mining')">
+                    <span class="section-icon">■</span>
+                    <span class="chevron" id="mining-chevron">▼</span>
+                    <h2 class="section-title">Mining</h2>
+                    <span class="section-subtitle">Configure mining settings</span>
+                </div>
+                <div class="section-content" id="mining-content">
+                    <div class="input-group">
+                        <label>Address:</label>
+                        <input type="text" id="mining-address" placeholder="kaspatest:...">
+                    </div>
+                    <div class="input-group">
+                        <label>Threads:</label>
+                        <div class="slider-group">
+                            <input type="range" id="threads-slider" min="1" max="16" value="1">
+                            <span id="threads-value">1</span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Throttle (ms, optional):</label>
+                        <input type="text" id="throttle-ms" placeholder="Optional">
+                    </div>
+                    <div class="button-group">
+                        <button class="btn btn-primary" id="start-mining-btn">▶ Start Mining</button>
+                        <button class="btn btn-danger" id="stop-mining-btn" style="display: none;">⏹ Stop Mining</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Section -->
+            <div class="section">
+                <div class="section-header" onclick="toggleSection('status')">
+                    <span class="section-icon">■</span>
+                    <span class="chevron" id="status-chevron">▼</span>
+                    <h2 class="section-title">Status</h2>
+                    <span class="section-subtitle">Current status messages</span>
+                </div>
+                <div class="section-content" id="status-content">
+                    <div class="status-box" id="status-message"></div>
+                </div>
+            </div>
+
+            <!-- Statistics Section -->
+            <div class="section">
+                <div class="section-header" onclick="toggleSection('stats')">
+                    <span class="section-icon">■</span>
+                    <span class="chevron" id="stats-chevron">▼</span>
+                    <h2 class="section-title">Statistics</h2>
+                    <span class="section-subtitle">Mining performance metrics</span>
+                </div>
+                <div class="section-content" id="stats-content">
+                    <div class="stats-box">
+                        <div class="stat-item">
+                            <span class="stat-label">Hashes Tried:</span>
+                            <span class="stat-value" id="hashes-tried">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Blocks Submitted:</span>
+                            <span class="stat-value" id="blocks-submitted">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Blocks Accepted:</span>
+                            <span class="stat-value" id="blocks-accepted">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logs Panel -->
+        <div class="logs-panel" id="logs-panel" style="display: none;">
+            <div class="logs-header">
+                <h3>Logs</h3>
+                <button class="close-logs" onclick="toggleLogs()">×</button>
+            </div>
+            <div class="logs-content" id="logs-content"></div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
+
