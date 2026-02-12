@@ -13,6 +13,47 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.0-dev \
+            libwebkit2gtk-4.1-dev \
+            build-essential \
+            curl \
+            wget \
+            file \
+            libxdo-dev \
+            libssl-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libgtk-3-dev \
+            libjavascriptcoregtk-4.1-dev \
+            protobuf-compiler \
+            libglib2.0-dev \
+            pkg-config \
+            libasound2-dev \
+            libdbus-1-dev
+
+      - name: Verify and configure glib-2.0
+        run: |
+          # Find glib-2.0.pc location
+          GLIB_PC_PATH=$(find /usr -name "glib-2.0.pc" 2>/dev/null | head -1)
+          if [ -z "$GLIB_PC_PATH" ]; then
+            echo "ERROR: glib-2.0.pc not found"
+            exit 1
+          fi
+          GLIB_PC_DIR=$(dirname "$GLIB_PC_PATH")
+          echo "Found glib-2.0.pc at: $GLIB_PC_PATH"
+          echo "Setting PKG_CONFIG_PATH to: $GLIB_PC_DIR"
+          echo "PKG_CONFIG_PATH=$GLIB_PC_DIR" >> $GITHUB_ENV
+          # Also add common pkg-config paths
+          export PKG_CONFIG_PATH="$GLIB_PC_DIR:/usr/lib/pkgconfig:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/share/pkgconfig"
+          echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH" >> $GITHUB_ENV
+          # Verify it works
+          pkg-config --modversion glib-2.0
+          pkg-config --cflags --libs glib-2.0
+
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
