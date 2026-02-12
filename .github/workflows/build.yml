@@ -82,6 +82,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install protoc
+        run: |
+          $protocVersion = "27.1"
+          $protocUrl = "https://github.com/protocolbuffers/protobuf/releases/download/v$protocVersion/protoc-$protocVersion-win64.zip"
+          $protocZip = "$env:TEMP\protoc.zip"
+          $protocDir = "$env:TEMP\protoc"
+          Invoke-WebRequest -Uri $protocUrl -OutFile $protocZip
+          Expand-Archive -Path $protocZip -DestinationPath $protocDir -Force
+          $protocPath = "$protocDir\bin\protoc.exe"
+          echo "$protocDir\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo "PROTOC=$protocPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
