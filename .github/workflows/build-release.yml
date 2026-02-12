@@ -34,19 +34,16 @@ jobs:
             target: 'x86_64-unknown-linux-gnu'
             bundle: 'appimage'
             binary-name: 'rkstratum-cpu-miner'
-            install-protoc: 'sudo apt-get update && sudo apt-get install -y protobuf-compiler'
           - platform: 'macos-latest'
             args: '--target x86_64-apple-darwin'
             target: 'x86_64-apple-darwin'
             bundle: 'dmg'
             binary-name: 'rkstratum-cpu-miner'
-            install-protoc: 'brew install protobuf'
           - platform: 'macos-latest'
             args: '--target aarch64-apple-darwin'
             target: 'aarch64-apple-darwin'
             bundle: 'dmg'
             binary-name: 'rkstratum-cpu-miner'
-            install-protoc: 'brew install protobuf'
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -73,11 +70,19 @@ jobs:
             protobuf-compiler \
             libglib2.0-dev \
             pkg-config \
-            libasound2-dev
+            libasound2-dev \
+            libdbus-1-dev
 
-      - name: Install protoc
-        if: matrix.install-protoc
-        run: ${{ matrix.install-protoc }}
+      - name: Verify glib-2.0 installation (Ubuntu only)
+        if: matrix.platform == 'ubuntu-20.04'
+        run: |
+          pkg-config --modversion glib-2.0 || echo "glib-2.0 not found"
+          pkg-config --cflags --libs glib-2.0 || echo "pkg-config failed"
+
+      - name: Install protoc (macOS only)
+        if: matrix.platform == 'macos-latest'
+        run: |
+          brew install protobuf
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable

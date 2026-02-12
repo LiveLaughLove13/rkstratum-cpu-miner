@@ -100,7 +100,15 @@ jobs:
             protobuf-compiler \
             libglib2.0-dev \
             pkg-config \
-            libasound2-dev
+            libasound2-dev \
+            libdbus-1-dev \
+            libayatana-appindicator3-dev
+
+      - name: Verify glib-2.0 installation
+        run: |
+          pkg-config --modversion glib-2.0 || echo "glib-2.0 not found"
+          pkg-config --cflags --libs glib-2.0 || echo "pkg-config failed"
+          find /usr -name "glib-2.0.pc" 2>/dev/null | head -1 || echo "glib-2.0.pc not found"
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
