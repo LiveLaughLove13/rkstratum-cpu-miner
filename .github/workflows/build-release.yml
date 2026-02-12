@@ -153,11 +153,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           projectPath: ./src-tauri
-          tagName: ${{ github.ref_name }}
-          releaseName: 'RKStratum CPU Miner v__VERSION__'
-          releaseBody: 'See the assets to download and install this version.'
-          releaseDraft: true
-          prerelease: false
           args: ${{ matrix.args }}
 
       - name: Upload artifacts
@@ -165,7 +160,10 @@ jobs:
         with:
           name: ${{ matrix.bundle }}-${{ matrix.target }}
           path: |
-            src-tauri/target/${{ matrix.target }}/release/bundle/${{ matrix.bundle }}/*
+            src-tauri/target/${{ matrix.target }}/release/bundle/${{ matrix.bundle }}/*.msi
+            src-tauri/target/${{ matrix.target }}/release/bundle/${{ matrix.bundle }}/*.exe
+            src-tauri/target/${{ matrix.target }}/release/bundle/${{ matrix.bundle }}/*.AppImage
+            src-tauri/target/${{ matrix.target }}/release/bundle/${{ matrix.bundle }}/*.dmg
 
   create-release:
     needs: build-tauri
@@ -184,7 +182,11 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: artifacts/**/*
+          files: |
+            artifacts/**/*.msi
+            artifacts/**/*.exe
+            artifacts/**/*.AppImage
+            artifacts/**/*.dmg
           draft: false
           prerelease: false
           generate_notes: true
